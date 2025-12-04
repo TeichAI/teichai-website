@@ -98,7 +98,7 @@ export default async function Home() {
           <div className="grid grid-cols-3 gap-8">
             <div>
               <p className="text-3xl font-bold text-[var(--foreground)]">{stats.totalDownloads}</p>
-              <p className="text-[var(--muted-foreground)] text-sm mt-1">Total Downloads</p>
+              <p className="text-[var(--muted-foreground)] text-sm mt-1">Downloads (last 30 days)</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-[var(--foreground)]">{stats.totalModels}</p>
