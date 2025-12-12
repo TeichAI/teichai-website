@@ -15,7 +15,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TeichAI - Distilled Models & Datasets",
-  description: "Open-source distilled models and curated reasoning datasets. A collaboration between Liontix and armand0e.",
+  description: "Open-source distilled models and curated reasoning datasets from frontier AI models like Claude, GPT, and Gemini.",
+  metadataBase: new URL("https://teichai.com"),
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-icon.png",
+  },
+  openGraph: {
+    title: "TeichAI - Distilled Models & Datasets",
+    description: "Open-source distilled models and curated reasoning datasets from frontier AI models like Claude, GPT, and Gemini.",
+    url: "https://teichai.com",
+    siteName: "TeichAI",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TeichAI - Distilled Models & Datasets",
+    description: "Open-source distilled models and curated reasoning datasets from frontier AI models.",
+  },
 };
 
 export default function RootLayout({
