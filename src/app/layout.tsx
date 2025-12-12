@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "Open-source distilled models and curated reasoning datasets from frontier AI models like Claude, GPT, and Gemini.",
   metadataBase: new URL("https://teichai.com"),
   icons: {
-    icon: "/favicon.png",
+    icon: "/icon.png",
     apple: "/apple-icon.png",
   },
   openGraph: {
