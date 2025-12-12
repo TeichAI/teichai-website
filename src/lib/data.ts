@@ -326,4 +326,10 @@ export const team = [
     focus: "Fine-tuning & quantization",
     link: "https://huggingface.co/armand0e",
   },
+  {
+    name: "owenqwenllmwine",
+    role: "Co-Founder",
+    focus: "Research & development",
+    link: "https://huggingface.co/owenqwenllmwine",
+  },
 ];
