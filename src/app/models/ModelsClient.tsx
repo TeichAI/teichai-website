@@ -74,7 +74,7 @@ export function ModelsClient({ models }: ModelsClientProps) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           >
             <option value="downloads">Most Downloads</option>
             <option value="likes">Most Likes</option>
@@ -88,7 +88,7 @@ export function ModelsClient({ models }: ModelsClientProps) {
           <select
             value={filterSource}
             onChange={(e) => setFilterSource(e.target.value)}
-            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           >
             <option value="all">All Sources</option>
             {sourceModels.map((source) => (
@@ -116,7 +116,7 @@ export function ModelsClient({ models }: ModelsClientProps) {
               href={`https://huggingface.co/${model.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-600/50 transition-colors block"
+              className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-[var(--accent)]/50 transition-colors block"
             >
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div className="flex-1">
@@ -128,7 +128,7 @@ export function ModelsClient({ models }: ModelsClientProps) {
                   </div>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {parsed.sourceModel !== "Unknown" && (
-                      <span className="text-xs bg-amber-600/20 text-amber-600 dark:text-amber-500 px-2 py-1 rounded">
+                      <span className="text-xs bg-[var(--accent-light)] text-[var(--accent)] px-2 py-1 rounded">
                         {parsed.sourceModel}
                       </span>
                     )}

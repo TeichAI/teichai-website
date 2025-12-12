@@ -9,7 +9,9 @@
   --border: #e4e4e7;
   --card: #ffffff;
   --card-foreground: #09090b;
-  --accent: #d97706;
+  --accent: #ff4c00;
+  --accent-hover: #e64500;
+  --accent-light: rgba(255, 76, 0, 0.1);
 }
 
 /* Dark theme */
@@ -21,7 +23,9 @@
   --border: #27272a;
   --card: #18181b;
   --card-foreground: #fafafa;
-  --accent: #d97706;
+  --accent: #ff4c00;
+  --accent-hover: #ff6a2a;
+  --accent-light: rgba(255, 76, 0, 0.15);
 }
 
 @theme inline {

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ExternalLink, Download, Heart, ArrowUpDown } from "lucide-react";
-import { formatDownloads } from "@/lib/huggingface";
+import { formatDownloads, parseDatasetName } from "@/lib/huggingface";
 
 interface HFDataset {
   id: string;
@@ -16,24 +16,6 @@ type SortOption = "downloads" | "likes" | "name" | "recent";
 
 interface DatasetsClientProps {
   datasets: HFDataset[];
-}
-
-function parseDatasetName(id: string): { name: string; sourceModel: string } {
-  const name = id.split("/")[1] || id;
-  let sourceModel = "Unknown";
-
-  if (name.includes("Claude-4.5-Opus")) sourceModel = "Claude Opus 4.5";
-  else if (name.includes("Claude-Sonnet") || name.includes("Claude-4.5-Sonnet")) sourceModel = "Claude Sonnet 4.5";
-  else if (name.includes("Gemini-3-Pro")) sourceModel = "Gemini 3 Pro";
-  else if (name.includes("Gemini-2.5-Pro")) sourceModel = "Gemini 2.5 Pro";
-  else if (name.includes("Gemini-2.5-Flash")) sourceModel = "Gemini 2.5 Flash";
-  else if (name.includes("GPT-5.1")) sourceModel = "GPT-5.1";
-  else if (name.includes("GPT-5-Codex")) sourceModel = "GPT-5 Codex";
-  else if (name.includes("Kimi-K2")) sourceModel = "Kimi K2";
-  else if (name.includes("GLM-4.6")) sourceModel = "GLM 4.6";
-  else if (name.includes("Command-A")) sourceModel = "Command A";
-
-  return { name, sourceModel };
 }
 
 export function DatasetsClient({ datasets }: DatasetsClientProps) {
@@ -92,7 +74,7 @@ export function DatasetsClient({ datasets }: DatasetsClientProps) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           >
             <option value="downloads">Most Downloads</option>
             <option value="likes">Most Likes</option>
@@ -106,7 +88,7 @@ export function DatasetsClient({ datasets }: DatasetsClientProps) {
           <select
             value={filterSource}
             onChange={(e) => setFilterSource(e.target.value)}
-            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           >
             <option value="all">All Sources</option>
             {sourceModels.map((source) => (
@@ -133,7 +115,7 @@ export function DatasetsClient({ datasets }: DatasetsClientProps) {
               href={`https://huggingface.co/datasets/${dataset.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-600/50 transition-colors block"
+              className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-[var(--accent)]/50 transition-colors block"
             >
               <div className="flex items-center gap-2 mb-2">
                 <h2 className="font-medium text-[var(--foreground)] text-sm">{parsed.name}</h2>
@@ -142,7 +124,7 @@ export function DatasetsClient({ datasets }: DatasetsClientProps) {
 
               <div className="flex flex-wrap gap-2 mb-3">
                 {parsed.sourceModel !== "Unknown" && (
-                  <span className="text-xs bg-amber-600/20 text-amber-600 dark:text-amber-500 px-2 py-1 rounded">
+                  <span className="text-xs bg-[var(--accent-light)] text-[var(--accent)] px-2 py-1 rounded">
                     {parsed.sourceModel}
                   </span>
                 )}

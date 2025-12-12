@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 
@@ -25,11 +26,18 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--background)]/90 backdrop-blur-sm border-b border-[var(--border)]">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--background)]/95 backdrop-blur-md border-b border-[var(--border)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-lg font-semibold text-[var(--foreground)]">TeichAI</span>
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image
+              src="/logo.png"
+              alt="TeichAI Logo"
+              width={32}
+              height={32}
+              className="rounded-lg"
+            />
+            <span className="text-lg font-bold text-[var(--foreground)]">TeichAI</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -38,11 +46,10 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`px-3 py-1.5 rounded text-sm transition-colors ${
-                  isActive(link.href)
-                    ? "text-[var(--foreground)] bg-[var(--muted)]"
-                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/50"
-                }`}
+                className={`px-3 py-1.5 rounded text-sm transition-colors ${isActive(link.href)
+                  ? "text-[var(--foreground)] bg-[var(--muted)]"
+                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/50"
+                  }`}
               >
                 {link.name}
               </Link>
@@ -58,7 +65,7 @@ export default function Navbar() {
               href="https://huggingface.co/TeichAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded text-sm font-medium transition-colors"
+              className="ml-1 px-3 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-md text-sm font-medium transition-colors"
             >
               HF Hub
             </a>
@@ -90,11 +97,10 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`block py-2 px-2 rounded text-sm ${
-                  isActive(link.href)
-                    ? "text-[var(--foreground)] bg-[var(--muted)]"
-                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-                }`}
+                className={`block py-2 px-2 rounded text-sm ${isActive(link.href)
+                  ? "text-[var(--foreground)] bg-[var(--muted)]"
+                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  }`}
               >
                 {link.name}
               </Link>
@@ -103,7 +109,7 @@ export default function Navbar() {
               href="https://huggingface.co/TeichAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="block mt-2 px-2 py-2 bg-amber-600 text-white rounded text-sm font-medium text-center"
+              className="block mt-2 px-2 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-md text-sm font-medium text-center transition-colors"
             >
               HF Hub
             </a>

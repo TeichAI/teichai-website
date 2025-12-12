@@ -119,7 +119,7 @@ export function calculateStats(models: HFModel[], datasets: HFDataset[]) {
   };
 }
 
-// Parse model name to extract info
+// Parse model name to extract info - dynamically extracts source model from name
 export function parseModelName(modelId: string): {
   org: string;
   name: string;
@@ -131,39 +131,91 @@ export function parseModelName(modelId: string): {
   const org = parts[0];
   const name = parts[1] || modelId;
 
-  // Extract base model and source from name
+  // Extract base model and params dynamically
   let baseModel = "Unknown";
-  let sourceModel = "Unknown";
   let params = "Unknown";
 
-  if (name.includes("Qwen3-4B")) {
-    baseModel = "Qwen3-4B";
-    params = "4B";
-  } else if (name.includes("Qwen3-8B")) {
-    baseModel = "Qwen3-8B";
-    params = "8B";
-  } else if (name.includes("Qwen3-14B")) {
-    baseModel = "Qwen3-14B";
-    params = "14B";
-  } else if (name.includes("Qwen3-30B")) {
-    baseModel = "Qwen3-30B-A3B";
-    params = "30B (3B active)";
-  } else if (name.includes("GPT-OSS")) {
+  // Match patterns like Qwen3-4B, Qwen3-8B, etc.
+  const qwenMatch = name.match(/Qwen3?-(\d+B)/i);
+  if (qwenMatch) {
+    baseModel = `Qwen3-${qwenMatch[1]}`;
+    params = qwenMatch[1];
+    if (name.includes("-A3B") || name.includes("-30B-A3B")) {
+      params = "30B (3B active)";
+    }
+  } else if (name.includes("GPT-OSS") || name.includes("gpt-oss")) {
     baseModel = "GPT-OSS";
-    params = "20B (3B active)";
+    const ossMatch = name.match(/(\d+)b/i);
+    params = ossMatch ? `${ossMatch[1]}B` : "20B";
   }
 
-  // Extract source model
-  if (name.includes("Claude-4.5-Opus")) sourceModel = "Claude Opus 4.5";
-  else if (name.includes("Claude-Sonnet") || name.includes("Claude-4.5-Sonnet")) sourceModel = "Claude Sonnet 4.5";
-  else if (name.includes("Gemini-3-Pro")) sourceModel = "Gemini 3 Pro";
-  else if (name.includes("Gemini-2.5-Pro")) sourceModel = "Gemini 2.5 Pro";
-  else if (name.includes("Gemini-2.5-Flash")) sourceModel = "Gemini 2.5 Flash";
-  else if (name.includes("GPT-5.1")) sourceModel = "GPT-5.1";
-  else if (name.includes("GPT-5-Codex")) sourceModel = "GPT-5 Codex";
-  else if (name.includes("Kimi-K2")) sourceModel = "Kimi K2";
-  else if (name.includes("GLM-4.6")) sourceModel = "GLM 4.6";
-  else if (name.includes("Command-A")) sourceModel = "Command A";
+  // Dynamically extract source model from name
+  // Pattern: after base model info, look for distillation source
+  const sourceModel = extractSourceModel(name);
 
   return { org, name, baseModel, sourceModel, params };
+}
+
+// Dynamically extract source model name from model ID
+function extractSourceModel(name: string): string {
+  // Remove common suffixes and prefixes to isolate the source model name
+  const cleanName = name
+    .replace(/-GGUF$/i, "")
+    .replace(/-Distill$/i, "")
+    .replace(/-Reasoning$/i, "")
+    .replace(/-High$/i, "");
+
+  // Known source model patterns (order matters - more specific first)
+  const sourcePatterns: [RegExp, string][] = [
+    [/DeepSeek[- ]?v?3\.?2[- ]?Speciale?/i, "DeepSeek v3.2 Speciale"],
+    [/DeepSeek[- ]?v?3\.?2/i, "DeepSeek v3.2"],
+    [/DeepSeek[- ]?R1/i, "DeepSeek R1"],
+    [/DeepSeek/i, "DeepSeek"],
+    [/Claude[- ]?4\.?5[- ]?Opus/i, "Claude Opus 4.5"],
+    [/Claude[- ]?Opus[- ]?4\.?5/i, "Claude Opus 4.5"],
+    [/Claude[- ]?4\.?5[- ]?Sonnet/i, "Claude Sonnet 4.5"],
+    [/Claude[- ]?Sonnet[- ]?4\.?5/i, "Claude Sonnet 4.5"],
+    [/Claude[- ]?Sonnet/i, "Claude Sonnet 4.5"],
+    [/Gemini[- ]?3[- ]?Pro/i, "Gemini 3 Pro"],
+    [/Gemini[- ]?2\.?5[- ]?Pro/i, "Gemini 2.5 Pro"],
+    [/Gemini[- ]?2\.?5[- ]?Flash/i, "Gemini 2.5 Flash"],
+    [/GPT[- ]?5\.?1/i, "GPT-5.1"],
+    [/GPT[- ]?5[- ]?Codex/i, "GPT-5 Codex"],
+    [/Kimi[- ]?K2/i, "Kimi K2"],
+    [/GLM[- ]?4\.?6/i, "GLM 4.6"],
+    [/Command[- ]?A/i, "Command A"],
+    [/Grok/i, "Grok"],
+    [/Llama[- ]?4/i, "Llama 4"],
+    [/Mistral/i, "Mistral"],
+  ];
+
+  for (const [pattern, label] of sourcePatterns) {
+    if (pattern.test(cleanName)) {
+      return label;
+    }
+  }
+
+  // Fallback: try to extract any recognizable model name pattern
+  // Look for capitalized words that might be model names after removing base model prefix
+  const afterBase = cleanName.replace(/^.*?(Qwen3?-\d+B|gpt-oss-\d+b)[- ]?/i, "");
+  if (afterBase && afterBase !== cleanName) {
+    // Clean up and format
+    const formatted = afterBase
+      .replace(/-/g, " ")
+      .replace(/Thinking \d+/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (formatted.length > 2 && formatted.length < 50) {
+      return formatted;
+    }
+  }
+
+  return "Unknown";
+}
+
+// Parse dataset name to extract source model
+export function parseDatasetName(datasetId: string): { name: string; sourceModel: string } {
+  const name = datasetId.split("/")[1] || datasetId;
+  const sourceModel = extractSourceModel(name);
+  return { name, sourceModel };
 }

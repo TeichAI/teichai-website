@@ -65,7 +65,7 @@ export default async function Home() {
       <section className="pt-24 pb-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="max-w-3xl">
-            <p className="text-amber-600 dark:text-amber-500 font-medium mb-3">Open Source AI Research</p>
+            <p className="text-[var(--accent)] font-medium mb-3">Open Source AI Research</p>
             <h1 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mb-6 leading-tight">
               Distilled models and curated datasets for the community
             </h1>
@@ -76,14 +76,14 @@ export default async function Home() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/models"
-                className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded font-medium transition-colors"
+                className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-6 py-3 rounded-lg font-medium transition-all shadow-sm hover:shadow-md"
               >
                 Browse Models
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/datasets"
-                className="inline-flex items-center gap-2 bg-[var(--muted)] hover:bg-[var(--border)] text-[var(--foreground)] px-5 py-2.5 rounded font-medium transition-colors"
+                className="inline-flex items-center gap-2 bg-[var(--muted)] hover:bg-[var(--border)] text-[var(--foreground)] px-6 py-3 rounded-lg font-medium transition-all"
               >
                 View Datasets
               </Link>
@@ -118,7 +118,7 @@ export default async function Home() {
           <h2 className="text-2xl font-bold text-[var(--foreground)] mb-8">What We Do</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-              <Cpu className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" />
+              <Cpu className="w-8 h-8 text-[var(--accent)] mb-4" />
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Model Distillation</h3>
               <p className="text-[var(--muted-foreground)] text-sm leading-relaxed">
                 We train open-source base models (Qwen3, GPT-OSS) on reasoning traces from
@@ -126,7 +126,7 @@ export default async function Home() {
               </p>
             </div>
             <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-              <Database className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" />
+              <Database className="w-8 h-8 text-[var(--accent)] mb-4" />
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Dataset Curation</h3>
               <p className="text-[var(--muted-foreground)] text-sm leading-relaxed">
                 We create high-quality reasoning datasets by querying models like Claude Opus,
@@ -134,7 +134,7 @@ export default async function Home() {
               </p>
             </div>
             <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-              <Download className="w-8 h-8 text-amber-600 dark:text-amber-500 mb-4" />
+              <Download className="w-8 h-8 text-[var(--accent)] mb-4" />
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">GGUF Quantization</h3>
               <p className="text-[var(--muted-foreground)] text-sm leading-relaxed">
                 All models are released in GGUF format with multiple quantization levels
@@ -150,7 +150,7 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-[var(--foreground)]">Top Models</h2>
-            <Link href="/models" className="text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 text-sm font-medium">
+            <Link href="/models" className="text-[var(--accent)] hover:text-[var(--accent-hover)] text-sm font-medium transition-colors">
               View all →
             </Link>
           </div>
@@ -162,7 +162,7 @@ export default async function Home() {
                   href={`https://huggingface.co/${model.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-600/50 transition-colors block"
+                  className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-[var(--accent)]/50 transition-colors block"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-medium text-[var(--foreground)]">{model.id.split("/")[1]}</h3>
@@ -179,7 +179,7 @@ export default async function Home() {
                   href="https://hf.co/TeichAI/Qwen3-14B-Claude-Sonnet-4.5-Reasoning-Distill-GGUF"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-600/50 transition-colors block"
+                  className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-[var(--accent)]/50 transition-colors block"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-medium text-[var(--foreground)]">Qwen3 14B Claude Sonnet 4.5</h3>
@@ -193,7 +193,7 @@ export default async function Home() {
                   href="https://hf.co/TeichAI/Qwen3-8B-Gemini-3-Pro-Preview-Distill-GGUF"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-amber-600/50 transition-colors block"
+                  className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-[var(--accent)]/50 transition-colors block"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-medium text-[var(--foreground)]">Qwen3 8B Gemini 3 Pro</h3>
@@ -224,7 +224,7 @@ export default async function Home() {
                 href="https://paypal.me/TeichAI"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded font-medium transition-colors"
+                className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-6 py-3 rounded-lg font-medium transition-all shadow-sm hover:shadow-md"
               >
                 Donate via PayPal
               </a>
