@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -89,6 +89,7 @@ export default function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[85vw] max-w-sm">
+              <SheetTitle className="sr-only">Navigation menu</SheetTitle>
               <Link
                 href="/"
                 onClick={() => setIsOpen(false)}
