@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="py-8 px-4 border-t border-[var(--border)] bg-[var(--background)]">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="text-[var(--foreground)] font-medium">
+    <footer className="mt-16 bg-background/95 py-10">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex items-center gap-6 text-sm">
+            <Link href="/" className="font-semibold tracking-tight text-foreground">
               TeichAI
             </Link>
             <a
               href="https://huggingface.co/TeichAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-sm transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               Hugging Face
             </a>
@@ -21,13 +21,13 @@ export default function Footer() {
               href="https://paypal.me/TeichAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-sm transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               Support Us
             </a>
           </div>
 
-          <p className="text-[var(--muted-foreground)] text-sm">
+          <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} TeichAI
           </p>
         </div>

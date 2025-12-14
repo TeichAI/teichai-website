@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { BenchmarkResult } from "@/lib/benchmarks";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface BenchmarksClientProps {
   benchmarkResults: BenchmarkResult[];
@@ -14,17 +16,20 @@ type BenchmarkKey = "arc_challenge" | "gpqa_diamond" | "hellaswag" | "mmlu" | "t
 export function BenchmarksClient({ benchmarkResults, baseModel, benchmarkInfo }: BenchmarksClientProps) {
   const [selectedBenchmark, setSelectedBenchmark] = useState<BenchmarkKey>("average");
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const benchmarks: BenchmarkKey[] = ["average", "arc_challenge", "gpqa_diamond", "hellaswag", "mmlu", "truthfulqa", "winogrande"];
 
   // Sort results by selected benchmark
   const sortedResults = [...benchmarkResults].sort((a, b) => b[selectedBenchmark] - a[selectedBenchmark]);
+  const displayResults = showAll ? sortedResults : sortedResults.slice(0, 12);
 
   // Find max value for chart scaling
   const maxValue = Math.max(
     ...benchmarkResults.map(r => r[selectedBenchmark]),
     baseModel[selectedBenchmark]
   );
+  const basePct = (baseModel[selectedBenchmark] / maxValue) * 100;
 
   const getBenchmarkLabel = (key: BenchmarkKey) => {
     if (key === "average") return "Average";
@@ -32,127 +37,183 @@ export function BenchmarksClient({ benchmarkResults, baseModel, benchmarkInfo }:
   };
 
   return (
-    <section className="py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">Performance Comparison</h2>
+    <section className="py-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Performance Comparison</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Pick a benchmark to sort the chart. Click a model to pin it and view all scores.
+            </p>
+          </div>
 
           {/* Benchmark selector */}
-          <div className="flex flex-wrap gap-2">
-            {benchmarks.map((benchmark) => (
-              <button
-                key={benchmark}
-                onClick={() => setSelectedBenchmark(benchmark)}
-                className={`px-3 py-1.5 text-xs rounded transition-colors ${
-                  selectedBenchmark === benchmark
-                    ? "bg-amber-600 text-white"
-                    : "bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--border)]"
-                }`}
-              >
-                {getBenchmarkLabel(benchmark)}
-              </button>
-            ))}
+          <div className="flex items-center gap-3">
+            <div className="flex max-w-full gap-1 overflow-x-auto rounded-xl border border-border/60 bg-[var(--muted)]/20 p-1">
+              {benchmarks.map((benchmark) => (
+                <Button
+                  key={benchmark}
+                  onClick={() => setSelectedBenchmark(benchmark)}
+                  size="sm"
+                  variant={selectedBenchmark === benchmark ? "default" : "ghost"}
+                  className="h-8 shrink-0 px-3 text-xs"
+                >
+                  {getBenchmarkLabel(benchmark)}
+                </Button>
+              ))}
+            </div>
+
+            <Button
+              size="sm"
+              variant="secondary"
+              className="h-8 shrink-0 px-3 text-xs"
+              onClick={() => setShowAll((v) => !v)}
+            >
+              {showAll ? "Top 12" : "Show all"}
+            </Button>
           </div>
         </div>
 
         {/* Chart description */}
-        <p className="text-[var(--muted-foreground)] text-sm mb-4">
+        <p className="mb-4 text-sm text-muted-foreground">
           {selectedBenchmark === "average"
             ? "Average accuracy across all 6 benchmarks. Higher is better."
             : benchmarkInfo[selectedBenchmark]?.description || ""}
         </p>
 
         {/* Bar chart */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-          <div className="space-y-3">
-            {/* Base model bar */}
-            <div
-              className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => setSelectedModel(null)}
-            >
-              <div className="w-32 text-sm text-[var(--muted-foreground)] truncate font-medium">
-                Base Model
-              </div>
-              <div className="flex-1 h-8 bg-[var(--muted)] rounded overflow-hidden relative">
-                <div
-                  className="h-full bg-zinc-500 dark:bg-zinc-600 transition-all duration-500"
-                  style={{ width: `${(baseModel[selectedBenchmark] / maxValue) * 100}%` }}
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--foreground)]">
-                  {baseModel[selectedBenchmark].toFixed(1)}%
+        <Card className="border border-border/60 bg-[var(--muted)]/20">
+          <CardContent className="p-5">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-zinc-500" />
+                  Base
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-green-500" />
+                  Above base
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-red-500" />
+                  Below base
                 </span>
               </div>
+              <span className="tabular-nums">
+                Base: {baseModel[selectedBenchmark].toFixed(1)}%
+              </span>
             </div>
 
-            {/* Distilled model bars */}
-            {sortedResults.map((result, index) => {
-              const value = result[selectedBenchmark];
-              const delta = value - baseModel[selectedBenchmark];
-              const isPositive = delta >= 0;
-              const isSelected = selectedModel === result.model;
-
-              return (
-                <div
-                  key={result.model}
-                  className={`flex items-center gap-3 cursor-pointer transition-opacity ${
-                    selectedModel && !isSelected ? "opacity-40" : "hover:opacity-80"
-                  }`}
-                  onClick={() => setSelectedModel(isSelected ? null : result.model)}
-                >
-                  <div className="w-32 text-sm text-[var(--foreground)] truncate" title={result.shortName}>
-                    <span className="text-[var(--muted-foreground)] mr-1">#{index + 1}</span>
-                    {result.shortName}
-                  </div>
-                  <div className="flex-1 h-8 bg-[var(--muted)] rounded overflow-hidden relative">
-                    <div
-                      className={`h-full transition-all duration-500 ${
-                        isPositive ? "bg-green-600 dark:bg-green-500" : "bg-red-500 dark:bg-red-400"
-                      }`}
-                      style={{ width: `${(value / maxValue) * 100}%` }}
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--foreground)]">
-                      {value.toFixed(1)}%
-                      <span className={`ml-2 text-xs ${isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
-                        ({isPositive ? "+" : ""}{delta.toFixed(1)})
-                      </span>
-                    </span>
+            <div className="space-y-2">
+              <div
+                className="group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-[var(--muted)]/30"
+                onClick={() => setSelectedModel(null)}
+              >
+                <div className="w-32 text-sm text-muted-foreground truncate font-medium">Base Model</div>
+                <div className="relative h-9 flex-1 overflow-hidden rounded-lg bg-muted/70">
+                  <div
+                    className="absolute inset-y-1 w-px bg-primary/30"
+                    style={{ left: `${basePct}%` }}
+                  />
+                  <div
+                    className="h-full bg-zinc-500/70 dark:bg-zinc-600/70 transition-all duration-500"
+                    style={{ width: `${(baseModel[selectedBenchmark] / maxValue) * 100}%` }}
+                  />
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-background/40 px-2 py-1 text-xs font-medium text-foreground backdrop-blur">
+                    {baseModel[selectedBenchmark].toFixed(1)}%
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              </div>
 
-        {/* Selected model details */}
-        {selectedModel && (
-          <div className="mt-6 bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-            <h3 className="font-medium text-[var(--foreground)] mb-4">
-              {benchmarkResults.find(r => r.model === selectedModel)?.shortName} - All Benchmarks
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {(["arc_challenge", "gpqa_diamond", "hellaswag", "mmlu", "truthfulqa", "winogrande"] as const).map((benchmark) => {
-                const result = benchmarkResults.find(r => r.model === selectedModel)!;
-                const value = result[benchmark];
-                const baseValue = baseModel[benchmark];
-                const delta = value - baseValue;
+              {displayResults.map((result, index) => {
+                const value = result[selectedBenchmark];
+                const delta = value - baseModel[selectedBenchmark];
                 const isPositive = delta >= 0;
+                const isSelected = selectedModel === result.model;
 
                 return (
-                  <div key={benchmark} className="text-center">
-                    <div className="text-xs text-[var(--muted-foreground)] mb-1">
-                      {benchmarkInfo[benchmark].name}
+                  <div
+                    key={result.model}
+                    className={`flex items-center gap-3 cursor-pointer rounded-lg p-2 transition-colors ${
+                      selectedModel && !isSelected ? "opacity-40" : "hover:bg-[var(--muted)]/30"
+                    } ${isSelected ? "bg-[var(--muted)]/30 ring-1 ring-primary/30" : ""}`}
+                    onClick={() => setSelectedModel(isSelected ? null : result.model)}
+                  >
+                    <div className="w-32 text-sm text-foreground truncate" title={result.shortName}>
+                      <span className="mr-1 text-muted-foreground tabular-nums">#{index + 1}</span>
+                      {result.shortName}
                     </div>
-                    <div className={`text-lg font-medium ${isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
-                      {value.toFixed(1)}%
-                    </div>
-                    <div className={`text-xs ${isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
-                      {isPositive ? "+" : ""}{delta.toFixed(1)} vs base
+                    <div className="relative h-9 flex-1 overflow-hidden rounded-lg bg-muted/70">
+                      <div
+                        className="absolute inset-y-1 w-px bg-primary/30"
+                        style={{ left: `${basePct}%` }}
+                      />
+                      <div
+                        className={`h-full transition-all duration-500 ${
+                          isPositive
+                            ? "bg-gradient-to-r from-green-600/70 to-green-500"
+                            : "bg-gradient-to-r from-red-500/60 to-red-400"
+                        }`}
+                        style={{ width: `${(value / maxValue) * 100}%` }}
+                      />
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 rounded-md bg-background/40 px-2 py-1 text-xs font-medium text-foreground backdrop-blur tabular-nums">
+                        <span>{value.toFixed(1)}%</span>
+                        <span className={isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}>
+                          {isPositive ? "+" : ""}
+                          {delta.toFixed(1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </CardContent>
+        </Card>
+
+        {/* Selected model details */}
+        {selectedModel && (
+          <Card className="mt-6 border border-border/60 bg-[var(--muted)]/20">
+            <CardContent className="p-5">
+              <h3 className="mb-4 font-medium text-foreground">
+              {benchmarkResults.find(r => r.model === selectedModel)?.shortName} - All Benchmarks
+              </h3>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+                {(["arc_challenge", "gpqa_diamond", "hellaswag", "mmlu", "truthfulqa", "winogrande"] as const).map(
+                  (benchmark) => {
+                    const result = benchmarkResults.find(r => r.model === selectedModel)!;
+                    const value = result[benchmark];
+                    const baseValue = baseModel[benchmark];
+                    const delta = value - baseValue;
+                    const isPositive = delta >= 0;
+
+                    return (
+                      <div key={benchmark} className="text-center">
+                        <div className="mb-1 text-xs text-muted-foreground">
+                          {benchmarkInfo[benchmark].name}
+                        </div>
+                        <div
+                          className={`text-lg font-medium ${
+                            isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"
+                          }`}
+                        >
+                          {value.toFixed(1)}%
+                        </div>
+                        <div
+                          className={`text-xs ${
+                            isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"
+                          }`}
+                        >
+                          {isPositive ? "+" : ""}
+                          {delta.toFixed(1)} vs base
+                        </div>
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </section>
