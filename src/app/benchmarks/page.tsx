@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { benchmarkResults, baseModel, benchmarkInfo, getTopPerformers } from "@/lib/benchmarks";
 import { BenchmarksClient } from "./BenchmarksClient";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = {
   title: "Benchmarks - TeichAI",
@@ -25,54 +26,67 @@ export default function BenchmarksPage() {
   const mostWins = modelWins.sort((a, b) => b.wins - a.wins || b.totalDelta - a.totalDelta)[0];
 
   return (
-    <main className="min-h-screen bg-[var(--background)]">
+    <main className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-24 pb-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-3">Benchmarks</h1>
-          <p className="text-[var(--muted-foreground)] max-w-2xl">
-            Comprehensive benchmark analysis comparing our distilled Qwen3-4B models against the base model.
-            All tests run with 4-bit quantization using lm-eval harness.
+      <section className="relative overflow-hidden pt-24 pb-10">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(255,76,0,0.18),transparent_55%)]" />
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary/80">
+            Evaluation
+          </p>
+          <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl">
+            Benchmark results, clearly explained
+          </h1>
+          <p className="max-w-2xl text-sm text-muted-foreground md:text-base">
+            Compare our distilled Qwen3-4B models against the base model across ARC, GPQA, HellaSwag,
+            MMLU, TruthfulQA, and WinoGrande. All tests use 4-bit quantization via lm-eval harness.
           </p>
         </div>
       </section>
 
       {/* Key Insights */}
-      <section className="pb-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Key Insights</h2>
+      <section className="pb-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">Key Insights</h2>
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-              <div className="text-xs text-green-600 dark:text-green-400 font-medium mb-2">HIGHEST AVERAGE</div>
-              <h3 className="font-medium text-[var(--foreground)] mb-1">{bestOverall.shortName}</h3>
-              <p className="text-[var(--muted-foreground)] text-sm">
-                {bestOverall.average.toFixed(1)}% average across all benchmarks
-                <span className="text-green-600 dark:text-green-400 ml-1">
-                  (+{(bestOverall.average - baseModel.average).toFixed(1)} vs base)
-                </span>
-              </p>
-            </div>
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-              <div className="text-xs text-amber-600 dark:text-amber-400 font-medium mb-2">MOST CONSISTENT</div>
-              <h3 className="font-medium text-[var(--foreground)] mb-1">{mostWins.model.shortName}</h3>
-              <p className="text-[var(--muted-foreground)] text-sm">
-                Beats base model on {mostWins.wins}/6 benchmarks
-                <span className="text-amber-600 dark:text-amber-400 ml-1">
-                  ({mostWins.totalDelta > 0 ? "+" : ""}{mostWins.totalDelta.toFixed(1)} total)
-                </span>
-              </p>
-            </div>
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-              <div className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-2">BEST GPQA</div>
-              <h3 className="font-medium text-[var(--foreground)] mb-1">{topPerformers.gpqa_diamond.shortName}</h3>
-              <p className="text-[var(--muted-foreground)] text-sm">
-                {topPerformers.gpqa_diamond.gpqa_diamond.toFixed(1)}% on graduate-level science
-                <span className="text-blue-600 dark:text-blue-400 ml-1">
-                  (+{(topPerformers.gpqa_diamond.gpqa_diamond - baseModel.gpqa_diamond).toFixed(1)} vs base)
-                </span>
-              </p>
-            </div>
+            <Card className="border border-border/60 bg-[var(--muted)]/20 transition-shadow hover:shadow-md">
+              <CardContent className="p-5">
+                <div className="mb-2 text-xs font-medium text-green-600 dark:text-green-400">HIGHEST AVERAGE</div>
+                <h3 className="mb-1 font-medium text-foreground">{bestOverall.shortName}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {bestOverall.average.toFixed(1)}% average across all benchmarks
+                  <span className="ml-1 text-green-600 dark:text-green-400">
+                    (+{(bestOverall.average - baseModel.average).toFixed(1)} vs base)
+                  </span>
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/60 bg-[var(--muted)]/20 transition-shadow hover:shadow-md">
+              <CardContent className="p-5">
+                <div className="mb-2 text-xs font-medium text-primary">MOST CONSISTENT</div>
+                <h3 className="mb-1 font-medium text-foreground">{mostWins.model.shortName}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Beats base model on {mostWins.wins}/6 benchmarks
+                  <span className="ml-1 text-primary">
+                    ({mostWins.totalDelta > 0 ? "+" : ""}
+                    {mostWins.totalDelta.toFixed(1)} total)
+                  </span>
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/60 bg-[var(--muted)]/20 transition-shadow hover:shadow-md">
+              <CardContent className="p-5">
+                <div className="mb-2 text-xs font-medium text-blue-600 dark:text-blue-400">BEST GPQA</div>
+                <h3 className="mb-1 font-medium text-foreground">{topPerformers.gpqa_diamond.shortName}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {topPerformers.gpqa_diamond.gpqa_diamond.toFixed(1)}% on graduate-level science
+                  <span className="ml-1 text-blue-600 dark:text-blue-400">
+                    (+{(topPerformers.gpqa_diamond.gpqa_diamond - baseModel.gpqa_diamond).toFixed(1)} vs base)
+                  </span>
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -85,85 +99,89 @@ export default function BenchmarksPage() {
       />
 
       {/* Detailed Comparison Table */}
-      <section className="py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Full Results</h2>
-          <p className="text-[var(--muted-foreground)] text-sm mb-4">
+      <section className="py-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">Full Results</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
             All scores shown as accuracy percentages. Green indicates improvement over base model, red indicates regression.
           </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--border)]">
-                  <th className="text-left py-3 px-3 text-[var(--muted-foreground)] font-medium">Model</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">ARC</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">GPQA</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">HellaSwag</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">MMLU</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">TruthfulQA</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">WinoGrande</th>
-                  <th className="text-center py-3 px-2 text-[var(--muted-foreground)] font-medium">Avg</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Base model row */}
-                <tr className="border-b border-[var(--border)] bg-[var(--muted)]/30">
-                  <td className="py-3 px-3 text-[var(--foreground)] font-medium">Base (Qwen3-4B)</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)]">{baseModel.arc_challenge.toFixed(1)}</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)]">{baseModel.gpqa_diamond.toFixed(1)}</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)]">{baseModel.hellaswag.toFixed(1)}</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)]">{baseModel.mmlu.toFixed(1)}</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)]">{baseModel.truthfulqa.toFixed(1)}</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)]">{baseModel.winogrande.toFixed(1)}</td>
-                  <td className="py-3 px-2 text-center text-[var(--muted-foreground)] font-medium">{baseModel.average.toFixed(1)}</td>
-                </tr>
-                {/* Distilled models */}
-                {benchmarkResults.map((result) => (
-                  <tr key={result.model} className="border-b border-[var(--border)]/50 hover:bg-[var(--muted)]/30">
-                    <td className="py-3 px-3 text-[var(--foreground)]">{result.shortName}</td>
-                    <ScoreCell value={result.arc_challenge} base={baseModel.arc_challenge} />
-                    <ScoreCell value={result.gpqa_diamond} base={baseModel.gpqa_diamond} />
-                    <ScoreCell value={result.hellaswag} base={baseModel.hellaswag} />
-                    <ScoreCell value={result.mmlu} base={baseModel.mmlu} />
-                    <ScoreCell value={result.truthfulqa} base={baseModel.truthfulqa} />
-                    <ScoreCell value={result.winogrande} base={baseModel.winogrande} />
-                    <ScoreCell value={result.average} base={baseModel.average} bold />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Card className="border border-border/60 bg-[var(--muted)]/20">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border bg-[var(--muted)]/20">
+                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Model</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">ARC</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">GPQA</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">HellaSwag</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">MMLU</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">TruthfulQA</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">WinoGrande</th>
+                      <th className="px-2 py-3 text-center font-medium text-muted-foreground">Avg</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-border bg-muted/30">
+                      <td className="px-3 py-3 font-medium text-foreground">Base (Qwen3-4B)</td>
+                      <td className="px-2 py-3 text-center text-muted-foreground">{baseModel.arc_challenge.toFixed(1)}</td>
+                      <td className="px-2 py-3 text-center text-muted-foreground">{baseModel.gpqa_diamond.toFixed(1)}</td>
+                      <td className="px-2 py-3 text-center text-muted-foreground">{baseModel.hellaswag.toFixed(1)}</td>
+                      <td className="px-2 py-3 text-center text-muted-foreground">{baseModel.mmlu.toFixed(1)}</td>
+                      <td className="px-2 py-3 text-center text-muted-foreground">{baseModel.truthfulqa.toFixed(1)}</td>
+                      <td className="px-2 py-3 text-center text-muted-foreground">{baseModel.winogrande.toFixed(1)}</td>
+                      <td className="px-2 py-3 text-center font-medium text-muted-foreground">{baseModel.average.toFixed(1)}</td>
+                    </tr>
+                    {benchmarkResults.map((result) => (
+                      <tr key={result.model} className="border-b border-border/50 hover:bg-muted/30">
+                        <td className="px-3 py-3 text-foreground">{result.shortName}</td>
+                        <ScoreCell value={result.arc_challenge} base={baseModel.arc_challenge} />
+                        <ScoreCell value={result.gpqa_diamond} base={baseModel.gpqa_diamond} />
+                        <ScoreCell value={result.hellaswag} base={baseModel.hellaswag} />
+                        <ScoreCell value={result.mmlu} base={baseModel.mmlu} />
+                        <ScoreCell value={result.truthfulqa} base={baseModel.truthfulqa} />
+                        <ScoreCell value={result.winogrande} base={baseModel.winogrande} />
+                        <ScoreCell value={result.average} base={baseModel.average} bold />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Methodology */}
-      <section className="py-8 pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Methodology</h2>
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-medium text-[var(--foreground)] mb-2">Test Configuration</h3>
-                <ul className="text-[var(--muted-foreground)] text-sm space-y-1">
+      <section className="py-8 pb-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">Methodology</h2>
+          <Card>
+            <CardContent className="p-5">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <h3 className="mb-2 font-medium text-foreground">Test Configuration</h3>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>• <strong>Quantization:</strong> 4-bit (matching typical deployment)</li>
                   <li>• <strong>Framework:</strong> lm-eval harness</li>
                   <li>• <strong>Temperature:</strong> 0.6</li>
                   <li>• <strong>Top-p:</strong> 0.95</li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-medium text-[var(--foreground)] mb-2">Benchmarks Used</h3>
-                <ul className="text-[var(--muted-foreground)] text-sm space-y-1">
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="mb-2 font-medium text-foreground">Benchmarks Used</h3>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>• <strong>ARC-Challenge:</strong> Science reasoning</li>
                   <li>• <strong>GPQA Diamond:</strong> Graduate-level science</li>
                   <li>• <strong>HellaSwag:</strong> Commonsense reasoning</li>
                   <li>• <strong>MMLU:</strong> Multi-task language understanding</li>
                   <li>• <strong>TruthfulQA:</strong> Truthfulness evaluation</li>
                   <li>• <strong>WinoGrande:</strong> Pronoun resolution</li>
-                </ul>
+                  </ul>
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -178,9 +196,13 @@ function ScoreCell({ value, base, bold = false }: { value: number; base: number;
   const isPositive = delta >= 0;
 
   return (
-    <td className={`py-3 px-2 text-center ${bold ? "font-medium" : ""}`}>
+    <td className={`px-2 py-3 text-center tabular-nums ${bold ? "font-medium" : ""}`}>
       <span className={isPositive ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}>
         {value.toFixed(1)}
+      </span>
+      <span className="ml-1 text-[11px] text-muted-foreground">
+        ({isPositive ? "+" : ""}
+        {delta.toFixed(1)})
       </span>
     </td>
   );

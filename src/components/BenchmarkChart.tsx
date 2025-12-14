@@ -24,20 +24,20 @@ export function BenchmarkChart({ results, benchmark, showBase = true }: Benchmar
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-[var(--foreground)]">{info.name}</h3>
-        <span className="text-xs text-[var(--muted-foreground)]">{info.description}</span>
+        <h3 className="font-medium text-foreground">{info.name}</h3>
+        <span className="text-xs text-muted-foreground">{info.description}</span>
       </div>
 
       <div className="space-y-2">
         {showBase && (
           <div className="flex items-center gap-3">
-            <div className="w-28 text-xs text-[var(--muted-foreground)] truncate">Base Model</div>
-            <div className="flex-1 h-6 bg-[var(--muted)] rounded overflow-hidden relative">
+            <div className="w-28 text-xs text-muted-foreground truncate">Base Model</div>
+            <div className="flex-1 h-6 bg-muted rounded overflow-hidden relative">
               <div
                 className="h-full bg-zinc-500 dark:bg-zinc-600 transition-all duration-500"
                 style={{ width: `${(baseValue / maxValue) * 100}%` }}
               />
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-[var(--foreground)]">
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-foreground">
                 {baseValue.toFixed(1)}%
               </span>
             </div>
@@ -51,19 +51,19 @@ export function BenchmarkChart({ results, benchmark, showBase = true }: Benchmar
 
           return (
             <div key={result.model} className="flex items-center gap-3">
-              <div className="w-28 text-xs text-[var(--foreground)] truncate" title={result.shortName}>
+              <div className="w-28 text-xs text-foreground truncate" title={result.shortName}>
                 {result.shortName}
               </div>
-              <div className="flex-1 h-6 bg-[var(--muted)] rounded overflow-hidden relative">
+              <div className="flex-1 h-6 bg-muted rounded overflow-hidden relative">
                 <div
                   className={`h-full transition-all duration-500 ${
-                    isPositive ? "bg-green-600 dark:bg-green-500" : "bg-amber-600 dark:bg-amber-500"
+                    isPositive ? "bg-green-600 dark:bg-green-500" : "bg-primary"
                   }`}
                   style={{ width: `${(value / maxValue) * 100}%` }}
                 />
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-[var(--foreground)]">
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-foreground">
                   {value.toFixed(1)}%
-                  <span className={`ml-1 ${isPositive ? "text-green-600 dark:text-green-400" : "text-amber-600 dark:text-amber-400"}`}>
+                  <span className={`ml-1 ${isPositive ? "text-green-600 dark:text-green-400" : "text-primary"}`}>
                     ({isPositive ? "+" : ""}{delta.toFixed(1)})
                   </span>
                 </span>
@@ -90,8 +90,8 @@ export function ComparisonBar({ label, value, baseValue, maxValue }: ComparisonB
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-20 text-xs text-[var(--muted-foreground)] truncate">{label}</div>
-      <div className="flex-1 h-5 bg-[var(--muted)] rounded overflow-hidden relative">
+      <div className="w-20 text-xs text-muted-foreground truncate">{label}</div>
+      <div className="flex-1 h-5 bg-muted rounded overflow-hidden relative">
         {/* Base line indicator */}
         <div
           className="absolute top-0 bottom-0 w-0.5 bg-zinc-400 dark:bg-zinc-500 z-10"
@@ -103,7 +103,7 @@ export function ComparisonBar({ label, value, baseValue, maxValue }: ComparisonB
           }`}
           style={{ width: `${(value / maxValue) * 100}%` }}
         />
-        <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] font-medium text-[var(--foreground)]">
+        <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] font-medium text-foreground">
           {value.toFixed(1)}%
         </span>
       </div>

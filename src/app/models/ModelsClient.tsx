@@ -3,6 +3,15 @@
 import { useState, useMemo } from "react";
 import { ExternalLink, Download, Heart, ArrowUpDown } from "lucide-react";
 import { formatDownloads, parseModelName } from "@/lib/huggingface";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface HFModel {
   id: string;
@@ -66,45 +75,50 @@ export function ModelsClient({ models }: ModelsClientProps) {
   }, [models, sortBy, filterSource]);
 
   return (
-    <div>
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <div className="flex items-center gap-2">
-          <ArrowUpDown className="w-4 h-4 text-[var(--muted-foreground)]" />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-          >
-            <option value="downloads">Most Downloads</option>
-            <option value="likes">Most Likes</option>
-            <option value="recent">Newest First</option>
-            <option value="name">Name (A-Z)</option>
-          </select>
-        </div>
+    <div className="space-y-6">
+      <Card className="border border-border/60 bg-[var(--muted)]/20">
+        <CardContent className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <ArrowUpDown className="size-4 text-muted-foreground" />
+            <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+              <SelectTrigger className="w-44">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                <SelectItem value="downloads">Most Downloads</SelectItem>
+                <SelectItem value="likes">Most Likes</SelectItem>
+                <SelectItem value="recent">Newest First</SelectItem>
+                <SelectItem value="name">Name (A-Z)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-[var(--muted-foreground)]">Source:</span>
-          <select
-            value={filterSource}
-            onChange={(e) => setFilterSource(e.target.value)}
-            className="bg-[var(--card)] border border-[var(--border)] rounded px-3 py-1.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-          >
-            <option value="all">All Sources</option>
-            {sourceModels.map((source) => (
-              <option key={source} value={source}>
-                {source}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Source:</span>
+            <Select
+              value={filterSource}
+              onValueChange={(value: string) => setFilterSource(value)}
+            >
+              <SelectTrigger className="w-44">
+                <SelectValue placeholder="All Sources" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                <SelectItem value="all">All Sources</SelectItem>
+                {sourceModels.map((source) => (
+                  <SelectItem key={source} value={source}>
+                    {source}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <span className="text-sm text-[var(--muted-foreground)]">
-          {filteredModels.length} model{filteredModels.length !== 1 ? "s" : ""}
-        </span>
-      </div>
+          <span className="text-sm text-muted-foreground">
+            {filteredModels.length} model{filteredModels.length !== 1 ? "s" : ""}
+          </span>
+        </CardContent>
+      </Card>
 
-      {/* Model Grid */}
       <div className="grid gap-4">
         {filteredModels.map((model) => {
           const parsed = parseModelName(model.id);
@@ -116,53 +130,59 @@ export function ModelsClient({ models }: ModelsClientProps) {
               href={`https://huggingface.co/${model.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:border-[var(--accent)]/50 transition-colors block"
+              className="block"
             >
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h2 className="font-medium text-[var(--foreground)]">
-                      {model.id.split("/")[1]}
-                    </h2>
-                    <ExternalLink className="w-4 h-4 text-[var(--muted-foreground)]" />
-                  </div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {parsed.sourceModel !== "Unknown" && (
-                      <span className="text-xs bg-[var(--accent-light)] text-[var(--accent)] px-2 py-1 rounded">
-                        {parsed.sourceModel}
+              <Card className="relative overflow-hidden border border-border/60 bg-[var(--muted)]/25 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:bg-[var(--muted)]/40 hover:shadow-[0_18px_60px_rgba(0,0,0,0.7)]">
+                <div className="absolute inset-y-0 left-0 w-1 bg-[var(--accent)]" />
+                <CardContent className="p-5 md:p-6">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <h2 className="text-sm font-semibold text-foreground md:text-base">
+                        {model.id.split("/")[1]}
+                      </h2>
+                      <ExternalLink className="mt-1 size-4 shrink-0 text-muted-foreground" />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {parsed.sourceModel !== "Unknown" && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-accent text-primary hover:bg-accent"
+                        >
+                          {parsed.sourceModel}
+                        </Badge>
+                      )}
+                      {isGGUF && (
+                        <Badge variant="secondary" className="font-normal">
+                          GGUF
+                        </Badge>
+                      )}
+                      {parsed.params !== "Unknown" && (
+                        <Badge variant="secondary" className="font-normal">
+                          {parsed.params}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Download className="size-3" />
+                        {formatDownloads(model.downloads)}
                       </span>
-                    )}
-                    {isGGUF && (
-                      <span className="text-xs bg-[var(--muted)] text-[var(--muted-foreground)] px-2 py-1 rounded">
-                        GGUF
+                      <span className="flex items-center gap-1">
+                        <Heart className="size-3" />
+                        {model.likes}
                       </span>
-                    )}
-                    {parsed.params !== "Unknown" && (
-                      <span className="text-xs bg-[var(--muted)] text-[var(--muted-foreground)] px-2 py-1 rounded">
-                        {parsed.params}
-                      </span>
-                    )}
+                      <span>by {parsed.org}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-[var(--muted-foreground)]">
-                    <span className="flex items-center gap-1">
-                      <Download className="w-3 h-3" />
-                      {formatDownloads(model.downloads)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Heart className="w-3 h-3" />
-                      {model.likes}
-                    </span>
-                    <span>by {parsed.org}</span>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </a>
           );
         })}
       </div>
 
       {filteredModels.length === 0 && (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">
+        <div className="py-12 text-center text-muted-foreground">
           No models found matching your filters.
         </div>
       )}

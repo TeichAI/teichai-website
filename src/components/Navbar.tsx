@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,95 +29,107 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--background)]/95 backdrop-blur-md border-b border-[var(--border)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image
-              src="/logo.png"
-              alt="TeichAI Logo"
-              width={32}
-              height={32}
-              className="rounded-lg"
-            />
-            <span className="text-lg font-bold text-[var(--foreground)]">TeichAI</span>
-          </Link>
+    <nav className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70 shadow-[0_1px_0_rgba(255,255,255,0.03)]">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image
+            src="/logo.png"
+            alt="TeichAI Logo"
+            width={32}
+            height={32}
+            className="rounded-lg shadow-sm"
+            priority
+          />
+          <span className="text-lg font-semibold tracking-tight text-foreground">TeichAI</span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`px-3 py-1.5 rounded text-sm transition-colors ${isActive(link.href)
-                  ? "text-[var(--foreground)] bg-[var(--muted)]"
-                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/50"
-                  }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <button
-              onClick={toggleTheme}
-              className="ml-2 p-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-              aria-label="Toggle theme"
+        <div className="hidden items-center gap-1 md:flex">
+          {navLinks.map((link) => (
+            <Button
+              key={link.name}
+              asChild
+              variant={isActive(link.href) ? "default" : "ghost"}
+              className="h-9 px-4"
             >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-            <a
-              href="https://huggingface.co/TeichAI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-1 px-3 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-md text-sm font-medium transition-colors"
-            >
+              <Link href={link.href}>{link.name}</Link>
+            </Button>
+          ))}
+
+          <Button
+            onClick={toggleTheme}
+            variant="ghost"
+            size="icon"
+            className="ml-1"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
+
+          <Button asChild className="ml-1">
+            <a href="https://huggingface.co/TeichAI" target="_blank" rel="noopener noreferrer">
               HF Hub
             </a>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-            >
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
+          </Button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden py-3 border-t border-[var(--border)]">
-            {navLinks.map((link) => (
+        <div className="flex items-center gap-1 md:hidden">
+          <Button
+            onClick={toggleTheme}
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="size-5" /> : <Moon className="size-5" />}
+          </Button>
+
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Open menu">
+                <Menu className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[85vw] max-w-sm">
               <Link
-                key={link.name}
-                href={link.href}
+                href="/"
                 onClick={() => setIsOpen(false)}
-                className={`block py-2 px-2 rounded text-sm ${isActive(link.href)
-                  ? "text-[var(--foreground)] bg-[var(--muted)]"
-                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-                  }`}
+                className="flex items-center gap-2.5"
               >
-                {link.name}
+                <Image
+                  src="/logo.png"
+                  alt="TeichAI Logo"
+                  width={28}
+                  height={28}
+                  className="rounded-md"
+                />
+                <span className="font-semibold tracking-tight">TeichAI</span>
               </Link>
-            ))}
-            <a
-              href="https://huggingface.co/TeichAI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block mt-2 px-2 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-md text-sm font-medium text-center transition-colors"
-            >
-              HF Hub
-            </a>
-          </div>
-        )}
+
+              <Separator className="my-4" />
+
+              <div className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <Button
+                    key={link.name}
+                    asChild
+                    variant={isActive(link.href) ? "secondary" : "ghost"}
+                    className="justify-start"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Link href={link.href}>{link.name}</Link>
+                  </Button>
+                ))}
+              </div>
+
+              <Separator className="my-4" />
+
+              <Button asChild className="w-full">
+                <a href="https://huggingface.co/TeichAI" target="_blank" rel="noopener noreferrer">
+                  HF Hub
+                </a>
+              </Button>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </nav>
   );
