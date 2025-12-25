@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "TeichAI - Distilled Models & Datasets",
   description: "Open-source distilled models and curated reasoning datasets from frontier AI models like Claude, GPT, and Gemini.",
   metadataBase: new URL("https://teichai.com"),
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: "/icon.png",
     apple: "/apple-icon.png",

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
-    "start": "next start",
+    "start": "node -e \"require('child_process').spawn('next',['start','-H','0.0.0.0','-p',String(process.env.PORT||3000)],{stdio:'inherit'})\"",
     "lint": "eslint"
   },
   "dependencies": {
