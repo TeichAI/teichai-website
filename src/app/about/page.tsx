@@ -28,6 +28,18 @@ export default function AboutPage() {
             We distill frontier reasoning models into much smaller open models and publish the datasets to
             help the community train, evaluate, and deploy locally.
           </p>
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
+            Join our Discord community for updates and collaboration.
+            {" "}
+            <a
+              href="https://discord.com/invite/zSsFYQBdYR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Join Discord
+            </a>
+          </p>
         </div>
       </section>
 

@@ -332,4 +332,10 @@ export const team = [
     focus: "Research & development",
     link: "https://huggingface.co/owenqwenllmwine",
   },
+  {
+    name: "Tikeape",
+    role: "Member",
+    focus: "Team member",
+    link: "https://huggingface.co/tikeape",
+  },
 ];

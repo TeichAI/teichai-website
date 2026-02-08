@@ -86,6 +86,11 @@ export default async function Home() {
               <Button asChild size="lg" variant="secondary">
                 <Link href="/datasets">View Datasets</Link>
               </Button>
+              <Button asChild variant="outline" className="border-border/60 text-muted-foreground hover:text-foreground">
+                <a href="https://discord.com/invite/zSsFYQBdYR" target="_blank" rel="noopener noreferrer">
+                  Join Discord
+                </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -250,11 +255,18 @@ export default async function Home() {
                 costs add up quickly - our Claude Opus dataset alone cost $52+ to create.
                 If you find our models useful, consider supporting us.
                 </p>
-                <Button asChild size="lg" className="shadow-sm">
-                  <a href="https://paypal.me/TeichAI" target="_blank" rel="noopener noreferrer">
-                    Donate via PayPal
-                  </a>
-                </Button>
+                <div className="flex flex-wrap gap-3">
+                  <Button asChild size="lg" className="shadow-sm">
+                    <a href="https://paypal.me/TeichAI" target="_blank" rel="noopener noreferrer">
+                      Donate via PayPal
+                    </a>
+                  </Button>
+                  <Button asChild size="lg" variant="secondary">
+                    <a href="https://discord.com/invite/zSsFYQBdYR" target="_blank" rel="noopener noreferrer">
+                      Join Discord
+                    </a>
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
