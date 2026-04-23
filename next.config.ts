@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  outputFileTracingRoot: process.cwd(),
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";
 
