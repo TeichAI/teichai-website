@@ -329,7 +329,7 @@ export const team = [
   {
     name: "owenqwenllmwine",
     role: "Team Member",
-    focus: "Research & development",
+    focus: "",
     link: "https://huggingface.co/owenqwenllmwine",
   },
   {
