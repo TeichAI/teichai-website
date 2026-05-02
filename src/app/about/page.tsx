@@ -95,7 +95,9 @@ export default function AboutPage() {
                         <p className="text-xs text-muted-foreground">{member.role}</p>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">{member.focus}</p>
+                    {member.focus && (
+                      <p className="text-sm text-muted-foreground">{member.focus}</p>
+                    )}
                   </CardContent>
                 </Card>
               </a>

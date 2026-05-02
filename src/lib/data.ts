@@ -328,8 +328,26 @@ export const team = [
   },
   {
     name: "owenqwenllmwine",
-    role: "Co-Founder",
+    role: "Team Member",
     focus: "Research & development",
     link: "https://huggingface.co/owenqwenllmwine",
+  },
+  {
+    name: "tikeape",
+    role: "Team Member",
+    focus: "",
+    link: "https://huggingface.co/tikeape",
+  },
+  {
+    name: "EclipseMist",
+    role: "Team Member",
+    focus: "",
+    link: "https://huggingface.co/EclipseMist",
+  },
+  {
+    name: "CompactAI",
+    role: "Team Member",
+    focus: "",
+    link: "https://huggingface.co/CompactAI",
   },
 ];
