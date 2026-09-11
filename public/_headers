@@ -1,0 +1,4 @@
+# Served by Cloudflare's asset layer, which answers before the Worker runs,
+# so long-lived caching for hashed build output has to live here.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

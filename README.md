@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# teichai.com
 
-## Getting Started
+The website for [TeichAI](https://huggingface.co/TeichAI), an open distillation lab. Everything on the site is
+derived live from the Hugging Face API, so publishing a model or dataset to the org is all it takes to update
+the catalog.
 
-First, run the development server:
+## What the site does
+
+- **Models** — every repository in the org is parsed and grouped into *releases* (the safetensors, GGUF and
+  LoRA repos of one fine-tune become one card). Teacher model, teacher lab, base family, parameter count,
+  context length, quant list, vision projector and Ollama Modelfile are all detected automatically.
+- **Datasets** — reasoning, agent and chat datasets with source model, sample count, license and cross-links
+  to the models trained on them.
+- **Home** — live org telemetry, a base × teacher distillation matrix, release cadence, leaderboards, the
+  pipeline, and the `teich` toolkit.
+- **`/api/huggingface`** — the normalized snapshot as JSON for anyone who wants it.
+
+Data is fetched with a one-hour revalidation window. Team roster, links and copy live in
+[`src/lib/site.ts`](src/lib/site.ts). Name-parsing rules (teachers, labs, base families) live in
+[`src/lib/taxonomy.ts`](src/lib/taxonomy.ts); add a pattern there when a new frontier model shows up.
+
+## Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint        # eslint
+npx tsc --noEmit    # type-check
+npm run build       # next build + OpenNext (Cloudflare) bundle
+npm run preview     # run the Cloudflare build locally
+npm run deploy      # deploy with wrangler
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stack
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 (App Router, React 19), Tailwind CSS v4, Radix primitives, framer-motion, deployed to Cloudflare
+Workers via OpenNext.

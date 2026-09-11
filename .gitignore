@@ -42,3 +42,6 @@ yarn-error.log*
 .open-next
 .wrangler
 cloudflare-env.d.ts
+
+# generated previews
+scripts/.logo-trace-preview.svg

@@ -1,191 +1,178 @@
-import { ExternalLink } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { team } from "@/lib/data";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, BookOpenCheck, Globe2, Hammer, Users } from "lucide-react";
+import { getSnapshot, getTeam } from "@/lib/hf";
+import { site } from "@/lib/site";
+import { PageHeader } from "@/components/PageHeader";
+import { Section, SectionHeader } from "@/components/ui/section";
+import { Counter } from "@/components/Counter";
+import { Pipeline } from "@/components/home/Pipeline";
+import { Community } from "@/components/home/Community";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { HuggingFaceIcon } from "@/components/BrandIcons";
 
-export const metadata = {
-  title: "About - TeichAI",
-  description: "Learn about TeichAI and the team behind our open-source AI research.",
+export const revalidate = 3600;
+
+const title = "About";
+const description = "TeichAI is a small, self-funded open distillation lab. Meet the team and learn how we work.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/about" },
+  openGraph: { title: `${title} · TeichAI`, description, url: "/about" },
 };
 
-export default function AboutPage() {
+const principles = [
+  {
+    icon: <Globe2 className="size-5" />,
+    title: "Open weights, open data",
+    body: "Every model ships with the dataset that made it. If you can download the distill, you can download what it learned from and retrain it yourself.",
+  },
+  {
+    icon: <Hammer className="size-5" />,
+    title: "Open tooling",
+    body: "The generation, extraction and masking pipeline is published as teich on PyPI. Our recipes are reproducible, not folklore.",
+  },
+  {
+    icon: <BookOpenCheck className="size-5" />,
+    title: "Honest model cards",
+    body: "Base model, dataset, training setup and known limitations are in every card. We would rather be boring than overclaim.",
+  },
+  {
+    icon: <Users className="size-5" />,
+    title: "Community-directed",
+    body: "Distill requests come in through Discord and the forum. A lot of what we ship started as someone asking for it.",
+  },
+];
+
+export default async function AboutPage() {
+  const [snap, team] = await Promise.all([getSnapshot(), getTeam()]);
+  const s = snap.stats;
+
   return (
-    <main className="min-h-screen bg-background">
-      <Navbar />
+    <>
+      <PageHeader
+        eyebrow="About TeichAI"
+        title="A small lab with a simple loop: ask the best models, teach the open ones, publish everything."
+        description="Frontier models from Anthropic, OpenAI, Google, DeepSeek and others are extraordinary, but they live behind APIs. We think their reasoning style should be something you can run on your own hardware. So we capture it, distill it into open-weight bases, and give the whole chain away."
+      />
 
-      <section className="relative overflow-hidden pt-24 pb-10">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(255,76,0,0.18),transparent_55%)]" />
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary/80">
-            About
-          </p>
-          <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl">
-            Open-source distillation, built in public
-          </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground md:text-base">
-            We distill frontier reasoning models into much smaller open models and publish the datasets to
-            help the community train, evaluate, and deploy locally.
-          </p>
-        </div>
-      </section>
+      <Section className="pt-4">
+        <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {[
+            { label: "Model releases", value: s.releases },
+            { label: "Datasets", value: s.datasets },
+            { label: "All-time downloads", value: s.downloadsAllTime },
+            { label: "HF followers", value: s.followers },
+          ].map((x) => (
+            <div key={x.label} className="rounded-2xl border border-border bg-surface p-5">
+              <dt className="text-[11px] font-medium uppercase tracking-wider text-subtle">{x.label}</dt>
+              <dd className="mt-1 text-3xl font-semibold tabular tracking-tight">
+                <Counter value={x.value} />
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </Section>
 
-      {/* Mission */}
-      <section className="pb-12">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Card className="border border-border/60 bg-[var(--muted)]/20">
-            <CardContent className="p-6 md:p-8">
-              <h2 className="mb-4 text-xl font-semibold text-foreground">Our Mission</h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                Frontier AI models from Anthropic, OpenAI, and Google are incredibly capable but
-                require API access and can be expensive to use at scale. We believe the open-source
-                community deserves access to similar reasoning capabilities.
-                </p>
-                <p>
-                Our approach is simple: we create high-quality datasets by querying frontier models
-                with diverse prompts, then fine-tune open-source base models on these reasoning traces.
-                The result is smaller, locally-runnable models that capture much of the original
-                model&apos;s reasoning style.
-                </p>
-                <p>
-                All our work is open source. We use{" "}
-                <a
-                  href="https://github.com/unslothai/unsloth"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Unsloth
-                </a>{" "}
-                for
-                efficient fine-tuning and release models in GGUF format for easy local deployment.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-12">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <h2 className="mb-6 text-xl font-semibold text-foreground">Team</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {team.map((member) => (
+      <Section className="pt-0" id="team">
+        <SectionHeader
+          eyebrow="The people"
+          title="Four of us, a lot of GPU hours."
+          description="Everything here is a side project funded out of pocket. Say hi on Hugging Face."
+        />
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {team.map((m) => (
+            <li key={m.handle}>
               <a
-                key={member.name}
-                href={member.link}
+                href={m.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block"
+                className="card-hover group flex h-full flex-col items-start rounded-2xl border border-border bg-surface p-5"
               >
-                <Card className="border border-border/60 bg-[var(--muted)]/20 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_18px_60px_rgba(0,0,0,0.6)]">
-                  <CardContent className="p-5">
-                    <div className="mb-3 flex items-center gap-3">
-                      <div className="flex size-10 items-center justify-center rounded-full bg-[var(--muted)]/60 font-medium text-foreground ring-1 ring-border/60">
-                        {member.name[0]}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-medium text-foreground">{member.name}</h3>
-                          <ExternalLink className="size-3 text-muted-foreground" />
-                        </div>
-                        <p className="text-xs text-muted-foreground">{member.role}</p>
-                      </div>
-                    </div>
-                    {member.focus && (
-                      <p className="text-sm text-muted-foreground">{member.focus}</p>
-                    )}
-                  </CardContent>
-                </Card>
+                <span className="relative">
+                  <span className="absolute -inset-1 rounded-full bg-ember/30 opacity-0 blur-md transition group-hover:opacity-100" />
+                  {m.avatarUrl ? (
+                    <Image
+                      src={m.avatarUrl}
+                      alt=""
+                      width={64}
+                      height={64}
+                      unoptimized
+                      className="relative size-16 rounded-full object-cover ring-2 ring-border"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="relative flex size-16 items-center justify-center rounded-full bg-surface-2 text-xl font-semibold ring-2 ring-border"
+                    >
+                      {m.handle[0]}
+                    </span>
+                  )}
+                </span>
+                <h3 className="mt-4 flex items-center gap-1.5 text-lg font-semibold">
+                  {m.handle}
+                  <ArrowUpRight className="size-3.5 text-subtle transition group-hover:text-ember" />
+                </h3>
+                <p className="text-xs font-medium uppercase tracking-wider text-ember">{m.role}</p>
+                {m.focus && <p className="mt-2 text-sm text-muted-foreground">{m.focus}</p>}
+                <span className="mt-auto pt-4 font-mono text-[11px] text-subtle">hf.co/{m.handle}</span>
               </a>
-            ))}
-          </div>
-        </div>
-      </section>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
-      {/* How We Work */}
-      <section className="py-12">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <h2 className="mb-6 text-xl font-semibold text-foreground">How We Work</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="border border-border/60 bg-[var(--muted)]/20">
-              <CardContent className="p-5">
-                <div className="mb-3 flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-accent text-primary font-semibold">
-                    1
-                  </div>
-                  <h3 className="font-medium text-foreground">Dataset Creation</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  We curate diverse prompts (coding, math, science) and query frontier models with
-                  high reasoning effort to capture detailed traces.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border border-border/60 bg-[var(--muted)]/20">
-              <CardContent className="p-5">
-                <div className="mb-3 flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-accent text-primary font-semibold">
-                    2
-                  </div>
-                  <h3 className="font-medium text-foreground">Fine-tuning</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  We fine-tune open-source base models (mostly Qwen3 variants) on our reasoning
-                  datasets using Unsloth for faster, cheaper training.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border border-border/60 bg-[var(--muted)]/20">
-              <CardContent className="p-5">
-                <div className="mb-3 flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-accent text-primary font-semibold">
-                    3
-                  </div>
-                  <h3 className="font-medium text-foreground">Quantization & Release</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  We export GGUF with multiple quant levels (Q3/Q4/Q6/Q8) for llama.cpp so you can
-                  run locally on consumer hardware.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+      <Section className="border-t border-border bg-surface/30">
+        <SectionHeader eyebrow="How we work" title="One pipeline, end to end." />
+        <Pipeline />
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild variant="outline">
+            <Link href="/teich">
+              The tooling <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+          <Button asChild variant="ghost">
+            <a href={site.links.unsloth} target="_blank" rel="noopener noreferrer">
+              Trained with Unsloth <ArrowUpRight className="size-3.5 opacity-60" />
+            </a>
+          </Button>
         </div>
-      </section>
+      </Section>
 
-      {/* Support */}
-      <section className="py-12 pb-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Card className="border border-border/60 bg-[var(--muted)]/20">
-            <CardContent className="p-6 md:p-8">
-              <h2 className="mb-4 text-xl font-semibold text-foreground">Support Our Work</h2>
-              <p className="mb-6 text-muted-foreground">
-              We&apos;re college students funding this research ourselves. Creating high-quality datasets
-              from frontier models isn&apos;t cheap - our Claude Opus dataset alone cost over $52 to generate.
-              If you find our models useful, please consider supporting us.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button asChild size="lg">
-                  <a href="https://paypal.me/TeichAI" target="_blank" rel="noopener noreferrer">
-                    Donate via PayPal
-                  </a>
-                </Button>
-                <Button asChild size="lg" variant="secondary">
-                  <a href="https://huggingface.co/TeichAI" target="_blank" rel="noopener noreferrer">
-                    Follow on Hugging Face
-                  </a>
-                </Button>
+      <Section>
+        <SectionHeader eyebrow="What we stand for" title="Principles we try not to break." />
+        <div className="grid gap-4 md:grid-cols-2">
+          {principles.map((p) => (
+            <div key={p.title} className="flex gap-4 rounded-2xl border border-border bg-surface p-5">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent text-ember ring-1 ring-ember/30">
+                {p.icon}
+              </span>
+              <div>
+                <h3 className="font-semibold">{p.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <Footer />
-    </main>
+      <Section className="border-t border-border bg-surface/30">
+        <SectionHeader
+          eyebrow="Get involved"
+          title="Join the community or fund the next run."
+          action={
+            <Button asChild>
+              <a href={site.links.huggingface} target="_blank" rel="noopener noreferrer">
+                <HuggingFaceIcon className="size-4" /> Follow on Hugging Face
+              </a>
+            </Button>
+          }
+        />
+        <Community followers={s.followers} />
+      </Section>
+    </>
   );
 }

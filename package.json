@@ -1,5 +1,5 @@
 {
-  "name": "windsurf-project-2",
+  "name": "teichai-website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,37 +10,37 @@
     "preview": "npm run build && opennextjs-cloudflare preview",
     "deploy": "npm run build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "start": "node -e \"require('child_process').spawn('next',['start','-H','0.0.0.0','-p',String(process.env.PORT||3000)],{stdio:'inherit'})\"",
-    "lint": "eslint"
+    "start": "node scripts/start.mjs",
+    "lint": "eslint",
+    "trace-logo": "node scripts/trace-logo.mjs",
+    "og": "node scripts/generate-og.mjs",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.5",
     "@radix-ui/react-dialog": "^1.1.15",
-    "@radix-ui/react-dropdown-menu": "^2.1.16",
-    "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-select": "^2.2.6",
-    "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.23.25",
     "geist": "^1.5.1",
     "lucide-react": "^0.555.0",
-    "next": "^16.2.4",
+    "next": "^16.3.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.4",
+    "eslint-config-next": "^16.3.4",
+    "potrace": "^2.1.8",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5",
     "wrangler": "^4.87.0"
   }

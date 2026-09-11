@@ -1,86 +1,77 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { DatasetsClient } from "./DatasetsClient";
-import { Card, CardContent } from "@/components/ui/card";
+import type { Metadata } from "next";
+import { getSnapshot } from "@/lib/hf";
+import { formatCompact } from "@/lib/format";
+import { site } from "@/lib/site";
+import { PageHeader, StatPill } from "@/components/PageHeader";
+import { DatasetExplorer } from "@/components/DatasetExplorer";
+import { DegradedNotice } from "@/components/DegradedNotice";
 
-export const metadata = {
-  title: "Datasets - TeichAI",
-  description: "High-quality reasoning datasets curated from frontier AI models.",
+export const revalidate = 3600;
+
+const title = "Datasets";
+const description =
+  "Reasoning traces, agent sessions and chat data generated from frontier models like Claude, GPT, Gemini and DeepSeek, published for training open models.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/datasets" },
+  openGraph: { title: `${title} · TeichAI`, description, url: "/datasets" },
 };
 
-interface HFDataset {
-  id: string;
-  downloads: number;
-  likes: number;
-  tags: string[];
-  createdAt: string;
-}
-
-async function getDatasets(): Promise<HFDataset[]> {
-  try {
-    const response = await fetch("https://huggingface.co/api/datasets?author=TeichAI&limit=100", {
-      next: { revalidate: 3600 },
-    });
-    const datasets = await response.json();
-    return datasets;
-  } catch (error) {
-    console.error("Error fetching datasets:", error);
-    return [];
-  }
-}
-
 export default async function DatasetsPage() {
-  const datasets = await getDatasets();
+  const snap = await getSnapshot();
+  const totalRows = snap.datasets.reduce((s, d) => s + (d.samples ?? 0), 0);
+  const releaseRefs = snap.releases.map((r) => ({
+    slug: r.slug,
+    title: r.title,
+    teacher: r.teacher,
+    datasets: r.datasets,
+  }));
+
+  // Google Dataset Search reads schema.org Dataset entries; the catalog itself
+  // is client-filtered, so list them here.
+  const datasetJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: snap.datasets.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Dataset",
+        name: d.title,
+        description: d.description || `${d.title} by TeichAI`,
+        url: d.url,
+        license: d.license,
+        creator: { "@type": "Organization", name: site.name, url: site.url },
+        dateCreated: d.createdAt,
+        dateModified: d.lastModified,
+      },
+    })),
+  };
 
   return (
-    <main className="min-h-screen bg-background">
-      <Navbar />
-
-      <section className="relative overflow-hidden pt-24 pb-10">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(255,76,0,0.18),transparent_55%)]" />
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 sm:px-6 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-xl">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary/80">
-              Dataset Library
-            </p>
-            <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl">
-              Reasoning traces for distilling frontier models
-            </h1>
-            <p className="max-w-xl text-sm text-muted-foreground md:text-base">
-              Curated datasets built by querying Claude, GPT, Gemini and other frontier models with
-              diverse coding, math, and reasoning prompts. Designed for training small open models
-              that still think clearly.
-            </p>
-          </div>
-
-          <Card className="w-full max-w-md bg-[var(--muted)]/40 shadow-[0_18px_60px_rgba(0,0,0,0.6)]">
-            <CardContent className="p-5">
-              <p className="mb-2 text-xs font-medium text-muted-foreground">What&apos;s included</p>
-              <p className="text-sm text-muted-foreground">
-                Each dataset includes detailed reasoning traces, carefully filtered conversations, and
-                metadata ready for fine-tuning. Listings are synced hourly from{" "}
-                <a
-                  href="https://huggingface.co/TeichAI"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Hugging Face
-                </a>
-                .
-              </p>
-            </CardContent>
-          </Card>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }} />
+      <PageHeader
+        eyebrow="Dataset library"
+        title="The traces behind the models."
+        description="Every dataset we train on is public. Reasoning traces with full thinking, multi-turn agent sessions with tool calls, and plain chat data, generated from frontier models and formatted for supervised fine-tuning."
+      >
+        <div className="flex flex-wrap gap-2">
+          <StatPill value={snap.stats.datasets} label="datasets" />
+          <StatPill value={`${formatCompact(totalRows)}+`} label="labeled samples" />
+          <StatPill
+            value={formatCompact(snap.datasets.reduce((s, d) => s + d.downloadsAllTime, 0))}
+            label="downloads"
+          />
+          <StatPill value={snap.datasets.filter((d) => d.generatedWithTeich).length} label="made with teich" />
         </div>
+      </PageHeader>
+      <section className="container-x pb-24">
+        {snap.degraded && <DegradedNotice className="mb-6" />}
+        <DatasetExplorer datasets={snap.datasets} releases={releaseRefs} newSince={snap.newSince} />
       </section>
-
-      <section className="pb-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <DatasetsClient datasets={datasets} />
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+    </>
   );
 }
