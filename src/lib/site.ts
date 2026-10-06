@@ -14,7 +14,6 @@ export const site = {
     teichRepo: "https://github.com/TeichAI/teich",
     teichPypi: "https://pypi.org/project/teich/",
     teichDocs: "https://github.com/TeichAI/teich/tree/main/docs",
-    forum: "https://forum.teichai.com/",
     discord: "https://discord.gg/zSsFYQBdYR",
     kofi: "https://ko-fi.com/M4M31XC0G7",
     paypal: "https://paypal.me/TeichAI",

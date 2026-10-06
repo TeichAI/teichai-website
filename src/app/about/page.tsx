@@ -43,7 +43,7 @@ const principles = [
   {
     icon: <Users className="size-5" />,
     title: "Community-directed",
-    body: "Distill requests come in through Discord and the forum. A lot of what we ship started as someone asking for it.",
+    body: "Distill requests come in through Discord. A lot of what we ship started as someone asking for it.",
   },
 ];
 

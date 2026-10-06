@@ -60,7 +60,7 @@ const structuredData = {
       name: site.name,
       url: site.url,
       logo: `${site.url}/icon-512.png`,
-      sameAs: [site.links.huggingface, site.links.github, site.links.discord, site.links.forum],
+      sameAs: [site.links.huggingface, site.links.github, site.links.discord],
     },
     {
       "@type": "WebSite",

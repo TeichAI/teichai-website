@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, Menu, MessagesSquare, Moon, Sun } from "lucide-react";
+import { ArrowUpRight, Menu, Moon, Sun } from "lucide-react";
 import { LogoLink, LogoMark, Wordmark } from "./Logo";
 import { useTheme } from "./ThemeProvider";
 import { DiscordIcon, GithubIcon, HuggingFaceIcon } from "./BrandIcons";
@@ -88,9 +88,6 @@ export default function Nav() {
             <IconLink href={site.links.discord} label="Discord">
               <DiscordIcon className="size-4" />
             </IconLink>
-            <IconLink href={site.links.forum} label="Community forum">
-              <MessagesSquare className="size-4" />
-            </IconLink>
             <IconLink href={site.links.github} label="GitHub">
               <GithubIcon className="size-4" />
             </IconLink>
@@ -173,7 +170,7 @@ export default function Nav() {
                   <HuggingFaceIcon className="size-4" />
                   Open Hugging Face org
                 </a>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <a
                     href={site.links.discord}
                     target="_blank"
@@ -181,14 +178,6 @@ export default function Nav() {
                     className="flex h-10 items-center justify-center gap-2 rounded-xl bg-surface-2 text-xs font-medium"
                   >
                     <DiscordIcon className="size-4" /> Discord
-                  </a>
-                  <a
-                    href={site.links.forum}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-10 items-center justify-center gap-2 rounded-xl bg-surface-2 text-xs font-medium"
-                  >
-                    <MessagesSquare className="size-4" /> Forum
                   </a>
                   <a
                     href={site.links.github}

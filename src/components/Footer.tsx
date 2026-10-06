@@ -14,7 +14,6 @@ const columns = [
     links: [
       { name: "Hugging Face", href: site.links.huggingface, external: true },
       { name: "Discord", href: site.links.discord, external: true },
-      { name: "Forum", href: site.links.forum, external: true },
       { name: "GitHub", href: site.links.github, external: true },
     ],
   },

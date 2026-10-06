@@ -1,4 +1,4 @@
-import { ArrowUpRight, Heart, MessagesSquare } from "lucide-react";
+import { ArrowUpRight, Heart } from "lucide-react";
 import { site } from "@/lib/site";
 import { formatCompact } from "@/lib/format";
 import { DiscordIcon, HuggingFaceIcon, KofiIcon } from "@/components/BrandIcons";
@@ -14,13 +14,6 @@ export function Community({ followers }: { followers: number }) {
       cta: "Join the server",
     },
     {
-      icon: <MessagesSquare className="size-5" />,
-      title: "Community forum",
-      body: "Longer-form discussion, bug reports, and distill requests that deserve a thread.",
-      href: site.links.forum,
-      cta: "Open the forum",
-    },
-    {
       icon: <HuggingFaceIcon className="size-5" />,
       title: "Hugging Face",
       body: `${formatCompact(followers)} followers get every drop first. Weights, quants and datasets live here.`,
@@ -31,7 +24,7 @@ export function Community({ followers }: { followers: number }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         {cards.map((c) => (
           <a
             key={c.title}
